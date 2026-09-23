@@ -28,6 +28,7 @@ enum charybdis_keymap_layers {
     LAYER_POINTER,
     LAYER_NUMERAL,
     LAYER_SYMBOLS,
+    LAYER_UMLAUT,
 };
 
 // Automatically enable sniping-mode on the pointer layer.
@@ -51,6 +52,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define ENT_SYM LT(LAYER_SYMBOLS, KC_ENT)
 #define BSP_NUM LT(LAYER_NUMERAL, KC_BSPC)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
+#define UML_SCL LT(LAYER_UMLAUT, KC_SCLN)
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
@@ -62,7 +64,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 // clang-format off
 /** \brief QWERTY layout (3 rows, 10 columns). */
 #define LAYOUT_LAYER_BASE                                                                     \
-       KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, \
+       KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    UML_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_K, KC_COMM,  KC_DOT, KC_SLSH, \
                       ESC_MED, SPC_NAV, TAB_FUN, ENT_SYM, BSP_NUM
@@ -156,6 +158,20 @@ static uint16_t auto_pointer_layer_timer = 0;
                       KC_LPRN, KC_RPRN, KC_UNDS, _______, XXXXXXX
 
 /**
+ * \brief German umlaut layer (hold the top-right key).
+ *
+ * Umlauts on the A, O, U and S positions, sent as AltGr combos for the
+ * US International layout: AltGr+Q=ä, AltGr+P=ö, AltGr+Y=ü, AltGr+S=ß.
+ * All other keys are transparent, so the base layer's home-row Shift can be
+ * held for capitals.
+ */
+#define LAYOUT_LAYER_UMLAUT                                                                   \
+    _______, _______, _______, _______, _______, _______, _______, ALGR(KC_Y), _______, _______, \
+    ALGR(KC_Q), _______, ALGR(KC_S), _______, _______, _______, _______, _______, _______, ALGR(KC_P), \
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
+                      _______, _______, _______, _______, _______
+
+/**
  * \brief Add Home Row mod to a layout.
  *
  * Expects a 10-key per row layout.  Adds support for GACS (Gui, Alt, Ctl, Shift)
@@ -212,6 +228,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_NUMERAL] = LAYOUT_wrapper(LAYOUT_LAYER_NUMERAL),
   [LAYER_POINTER] = LAYOUT_wrapper(LAYOUT_LAYER_POINTER),
   [LAYER_SYMBOLS] = LAYOUT_wrapper(LAYOUT_LAYER_SYMBOLS),
+  [LAYER_UMLAUT] = LAYOUT_wrapper(LAYOUT_LAYER_UMLAUT),
 };
 
 // clang-format on
+
+/** \brief Combos. R, S and T are home-row mod-taps, so match those keycodes. */
+const uint16_t PROGMEM rst_combo[] = {LALT_T(KC_R), LCTL_T(KC_S), LSFT_T(KC_T), COMBO_END};
+
+combo_t key_combos[] = {
+    COMBO(rst_combo, KC_ESC),
+};
