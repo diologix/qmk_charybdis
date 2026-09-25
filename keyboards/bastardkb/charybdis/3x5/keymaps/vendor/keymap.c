@@ -56,7 +56,8 @@ static uint16_t auto_pointer_layer_timer = 0;
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
 #endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
-#define TAB_NUM LT(LAYER_NUMERAL, KC_TAB)
+// Tap: left click (on every layer), hold: numeral layer.
+#define BTN_NUM LT(LAYER_NUMERAL, MS_BTN1)
 #define SPC_NAV LT(LAYER_NAVIGATION, KC_SPC)
 #define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
 #define BSP_SYM LT(LAYER_SYMBOLS, KC_BSPC)
@@ -93,7 +94,7 @@ static uint16_t auto_pointer_layer_timer = 0;
       MED_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    MED_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                      TAB_NUM, SPC_NAV, ENT_FUN, BSP_SYM, BTN_NAV
+                      BTN_NUM, SPC_NAV, ENT_FUN, BSP_SYM, BTN_NAV
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
@@ -142,7 +143,7 @@ static uint16_t auto_pointer_layer_timer = 0;
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
     ______________HOME_ROW_SCGA_L______________, ______________HOME_ROW_SCGA_R______________, \
     _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
-                      MS_BTN2, MS_BTN1, MS_BTN3, MS_BTN3, MS_BTN1
+                      MS_BTN1, MS_BTN3, MS_BTN2, MS_BTN3, MS_BTN1
 
 /**
  * \brief Navigation layer.
@@ -247,12 +248,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /** \brief Combos. R, S and T are home-row mod-taps, so match those keycodes. */
 const uint16_t PROGMEM rst_combo[] = {LCTL_T(KC_R), LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
 const uint16_t PROGMEM st_combo[]  = {LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
+const uint16_t PROGMEM tab_combo[]       = {LSFT_T(KC_A), LCTL_T(KC_R), COMBO_END};
+const uint16_t PROGMEM shift_tab_combo[] = {MED_Q, KC_W, COMBO_END};
 // Clipboard combos from the ZMK keymap: letter + Space thumb = Ctrl+letter,
-// letter + Tab thumb = Ctrl+Shift+letter.
+// letter + outer left thumb = Ctrl+Shift+letter.
 const uint16_t PROGMEM copy_combo[]        = {KC_C, SPC_NAV, COMBO_END};
 const uint16_t PROGMEM paste_combo[]       = {KC_V, SPC_NAV, COMBO_END};
-const uint16_t PROGMEM shift_copy_combo[]  = {KC_C, TAB_NUM, COMBO_END};
-const uint16_t PROGMEM shift_paste_combo[] = {KC_V, TAB_NUM, COMBO_END};
+const uint16_t PROGMEM shift_copy_combo[]  = {KC_C, BTN_NUM, COMBO_END};
+const uint16_t PROGMEM shift_paste_combo[] = {KC_V, BTN_NUM, COMBO_END};
 const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_NAV, COMBO_END};
 // Umlauts from the ZMK keymap, sent as AltGr combos for US International.
 // Hold Shift on the other hand for capitals.
@@ -265,6 +268,8 @@ combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
     // Sticky Gui for the next key, as ZMK's `&sk LEFT_WIN`.
     COMBO(st_combo, OSM(MOD_LGUI)),
+    COMBO(tab_combo, KC_TAB),
+    COMBO(shift_tab_combo, LSFT(KC_TAB)),
     COMBO(copy_combo, LCTL(KC_C)),
     COMBO(paste_combo, LCTL(KC_V)),
     COMBO(shift_copy_combo, LCTL(LSFT(KC_C))),
