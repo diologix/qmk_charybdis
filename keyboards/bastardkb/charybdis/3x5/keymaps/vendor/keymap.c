@@ -257,11 +257,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /** \brief Combos. R, S and T are home-row mod-taps, so match those keycodes. */
 const uint16_t PROGMEM rst_combo[] = {LCTL_T(KC_R), LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
 const uint16_t PROGMEM st_combo[]  = {LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
+// Clipboard combos from the ZMK keymap: letter + Space thumb = Ctrl+letter,
+// letter + Tab thumb = Ctrl+Shift+letter.
+const uint16_t PROGMEM copy_combo[]        = {KC_C, SPC_MED, COMBO_END};
+const uint16_t PROGMEM paste_combo[]       = {KC_V, SPC_MED, COMBO_END};
+const uint16_t PROGMEM shift_copy_combo[]  = {KC_C, TAB_NUM, COMBO_END};
+const uint16_t PROGMEM shift_paste_combo[] = {KC_V, TAB_NUM, COMBO_END};
+const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_MED, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
     // Sticky Gui for the next key, as ZMK's `&sk LEFT_WIN`.
     COMBO(st_combo, OSM(MOD_LGUI)),
+    COMBO(copy_combo, LCTL(KC_C)),
+    COMBO(paste_combo, LCTL(KC_V)),
+    COMBO(shift_copy_combo, LCTL(LSFT(KC_C))),
+    COMBO(shift_paste_combo, LCTL(LSFT(KC_V))),
+    // Copy username (Ctrl+B, e.g. in KeePassXC).
+    COMBO(username_combo, LCTL(KC_B)),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
