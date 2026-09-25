@@ -39,7 +39,6 @@ enum charybdis_keymap_layers {
     LAYER_POINTER,
     LAYER_NUMERAL,
     LAYER_SYMBOLS,
-    LAYER_UMLAUT,
 };
 
 // Automatically enable sniping-mode on the pointer layer.
@@ -58,13 +57,15 @@ static uint16_t auto_pointer_layer_timer = 0;
 #endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
 #define TAB_NUM LT(LAYER_NUMERAL, KC_TAB)
-#define SPC_MED LT(LAYER_MEDIA, KC_SPC)
+#define SPC_NAV LT(LAYER_NAVIGATION, KC_SPC)
 #define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
 #define BSP_SYM LT(LAYER_SYMBOLS, KC_BSPC)
 // Tap: left click (on every layer), hold: navigation layer.
 #define BTN_NAV LT(LAYER_NAVIGATION, MS_BTN1)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
-#define UML_SCL LT(LAYER_UMLAUT, KC_SCLN)
+// Top outer keys: hold for the media layer.
+#define MED_Q LT(LAYER_MEDIA, KC_Q)
+#define MED_SCL LT(LAYER_MEDIA, KC_SCLN)
 
 // Workspace keys (nav layer): tap = Gui+n, hold = Gui+Shift+n.  Handled in
 // `process_record_user`; layer 0 is only used as a tap-hold carrier.
@@ -89,10 +90,10 @@ static uint16_t auto_pointer_layer_timer = 0;
 // clang-format off
 /** \brief QWERTY layout (3 rows, 10 columns). */
 #define LAYOUT_LAYER_BASE                                                                     \
-       KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    UML_SCL, \
+      MED_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    MED_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                      TAB_NUM, SPC_MED, ENT_FUN, BSP_SYM, BTN_NAV
+                      TAB_NUM, SPC_NAV, ENT_FUN, BSP_SYM, BTN_NAV
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
@@ -124,15 +125,16 @@ static uint16_t auto_pointer_layer_timer = 0;
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
 
 /**
- * \brief Media layer.
+ * \brief Media layer (hold the top outer key on either side).
  *
- * Tertiary left- and right-hand layer is media and RGB control.  This layer is
- * symmetrical to accomodate the left- and right-hand trackball.
+ * Left half: the lower two rows of the ZMK media layer's right half.  Right
+ * half keeps previous/volume/mute/next.  Bootloader and EEPROM reset on the
+ * inner bottom keys.
  */
 #define LAYOUT_LAYER_MEDIA                                                                    \
-    XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
-    KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
-    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, XXXXXXX, XXXXXXX, XXXXXXX, \
+    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______________DEAD_HALF_ROW_______________, \
+    KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT, XXXXXXX, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
+    XXXXXXX, KC_MUTE, KC_MPLY,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, XXXXXXX, XXXXXXX, XXXXXXX, \
                       KC_MPLY, _______, KC_MSTP, KC_MSTP, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */
@@ -147,11 +149,12 @@ static uint16_t auto_pointer_layer_timer = 0;
  *
  * Left half taken over from the ZMK keymap (L1-NAV): workspace keys (tap =
  * Gui+n, hold = Gui+Shift+n), Gui+Alt+1/2 and Shift.  Right half has the
- * arrows starting on the inner column as in ZMK, line and page movement below.
+ * arrows starting on the inner column as in ZMK, line and page movement below,
+ * caps lock above.  Held from the middle left or the outer right thumb.
  */
 #define LAYOUT_LAYER_NAVIGATION                                                               \
-    XXXXXXX,    WS_1,    WS_2,    WS_3, LGUI(LALT(KC_1)), _______________DEAD_HALF_ROW_______________, \
-       WS_0,    WS_4,    WS_5,    WS_6, LGUI(LALT(KC_2)), KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_CAPS, \
+    XXXXXXX,    WS_1,    WS_2,    WS_3, LGUI(LALT(KC_1)), KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+       WS_0,    WS_4,    WS_5,    WS_6, LGUI(LALT(KC_2)), KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, XXXXXXX, \
     KC_LSFT,    WS_7,    WS_8,    WS_9, XXXXXXX, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  KC_INS, \
                       KC_LSFT, _______, KC_LGUI, KC_BSPC, _______
 
@@ -177,20 +180,6 @@ static uint16_t auto_pointer_layer_timer = 0;
     KC_HASH, KC_EXLM, KC_DQUO, KC_QUOT, KC_MINS, XXXXXXX, XXXXXXX, XXXXXXX, KC_AMPR, KC_ASTR, \
     KC_TILD,  KC_DLR, KC_PERC, KC_CIRC, KC_PIPE, _______________DEAD_HALF_ROW_______________, \
       KC_AT, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC, KC_LPRN, KC_RPRN, XXXXXXX, XXXXXXX, KC_BSLS, \
-                      _______, _______, _______, _______, _______
-
-/**
- * \brief German umlaut layer (hold the top-right key).
- *
- * Umlauts on the A, O, U and S positions, sent as AltGr combos for the
- * US International layout: AltGr+Q=ä, AltGr+P=ö, AltGr+Y=ü, AltGr+S=ß.
- * All other keys are transparent, so the base layer's home-row Shift can be
- * held for capitals.
- */
-#define LAYOUT_LAYER_UMLAUT                                                                   \
-    _______, _______, _______, _______, _______, _______, _______, ALGR(KC_Y), _______, _______, \
-    ALGR(KC_Q), _______, ALGR(KC_S), _______, _______, _______, _______, _______, _______, ALGR(KC_P), \
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
                       _______, _______, _______, _______, _______
 
 /**
@@ -251,7 +240,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_NUMERAL] = LAYOUT_wrapper(LAYOUT_LAYER_NUMERAL),
   [LAYER_POINTER] = LAYOUT_wrapper(LAYOUT_LAYER_POINTER),
   [LAYER_SYMBOLS] = LAYOUT_wrapper(LAYOUT_LAYER_SYMBOLS),
-  [LAYER_UMLAUT] = LAYOUT_wrapper(LAYOUT_LAYER_UMLAUT),
 };
 
 // clang-format on
@@ -261,11 +249,17 @@ const uint16_t PROGMEM rst_combo[] = {LCTL_T(KC_R), LGUI_T(KC_S), LALT_T(KC_T), 
 const uint16_t PROGMEM st_combo[]  = {LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
 // Clipboard combos from the ZMK keymap: letter + Space thumb = Ctrl+letter,
 // letter + Tab thumb = Ctrl+Shift+letter.
-const uint16_t PROGMEM copy_combo[]        = {KC_C, SPC_MED, COMBO_END};
-const uint16_t PROGMEM paste_combo[]       = {KC_V, SPC_MED, COMBO_END};
+const uint16_t PROGMEM copy_combo[]        = {KC_C, SPC_NAV, COMBO_END};
+const uint16_t PROGMEM paste_combo[]       = {KC_V, SPC_NAV, COMBO_END};
 const uint16_t PROGMEM shift_copy_combo[]  = {KC_C, TAB_NUM, COMBO_END};
 const uint16_t PROGMEM shift_paste_combo[] = {KC_V, TAB_NUM, COMBO_END};
-const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_MED, COMBO_END};
+const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_NAV, COMBO_END};
+// Umlauts from the ZMK keymap, sent as AltGr combos for US International.
+// Hold Shift on the other hand for capitals.
+const uint16_t PROGMEM ae_combo[] = {LSFT_T(KC_A), SPC_NAV, COMBO_END};
+const uint16_t PROGMEM sz_combo[] = {LGUI_T(KC_S), SPC_NAV, COMBO_END};
+const uint16_t PROGMEM oe_combo[] = {LSFT_T(KC_O), BTN_NAV, COMBO_END};
+const uint16_t PROGMEM ue_combo[] = {KC_U, BTN_NAV, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
@@ -277,6 +271,10 @@ combo_t key_combos[] = {
     COMBO(shift_paste_combo, LCTL(LSFT(KC_V))),
     // Copy username (Ctrl+B, e.g. in KeePassXC).
     COMBO(username_combo, LCTL(KC_B)),
+    COMBO(ae_combo, ALGR(KC_Q)),
+    COMBO(sz_combo, ALGR(KC_S)),
+    COMBO(oe_combo, ALGR(KC_P)),
+    COMBO(ue_combo, ALGR(KC_Y)),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
