@@ -81,6 +81,10 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define WS_9 LT(0, KC_9)
 #define WS_0 LT(0, KC_0)
 
+// Pointer layer: tap = middle click, hold = drag-scroll.  Handled in
+// `process_record_user`.
+#define BTN3_SCR LT(0, MS_BTN3)
+
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
 #    define DPI_MOD KC_NO
@@ -143,7 +147,7 @@ static uint16_t auto_pointer_layer_timer = 0;
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
     ______________HOME_ROW_SCGA_L______________, ______________HOME_ROW_SCGA_R______________, \
     _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
-                      MS_BTN1, MS_BTN3, MS_BTN2, MS_BTN3, MS_BTN1
+                      MS_BTN1, BTN3_SCR, MS_BTN2, MS_BTN3, MS_BTN1
 
 /**
  * \brief Navigation layer.
@@ -290,6 +294,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(record->tap.count ? LGUI(kc) : LGUI(LSFT(kc)));
             }
             return false;
+#ifdef POINTING_DEVICE_ENABLE
+        case BTN3_SCR:
+            if (record->tap.count) {
+                if (record->event.pressed) {
+                    tap_code16(MS_BTN3);
+                }
+            } else if (record->event.pressed) {
+                bkpd_mode_set_active(MODE_DRAGSCROLL);
+            } else {
+                bkpd_mode_release(MODE_DRAGSCROLL);
+            }
+            return false;
+#endif // POINTING_DEVICE_ENABLE
     }
     return true;
 }
