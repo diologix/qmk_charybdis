@@ -16,6 +16,10 @@
  */
 #include QMK_KEYBOARD_H
 
+#ifdef POINTING_DEVICE_ENABLE
+#    include "bk_pointing_device.h"
+#endif // POINTING_DEVICE_ENABLE
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #    include "timer.h"
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -46,11 +50,12 @@ static uint16_t auto_pointer_layer_timer = 0;
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
 #endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
-#define ESC_MED LT(LAYER_MEDIA, KC_ESC)
-#define SPC_NAV LT(LAYER_NAVIGATION, KC_SPC)
-#define TAB_FUN LT(LAYER_FUNCTION, KC_TAB)
-#define ENT_SYM LT(LAYER_SYMBOLS, KC_ENT)
-#define BSP_NUM LT(LAYER_NUMERAL, KC_BSPC)
+#define TAB_NUM LT(LAYER_NUMERAL, KC_TAB)
+#define SPC_MED LT(LAYER_MEDIA, KC_SPC)
+#define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
+#define BSP_SYM LT(LAYER_SYMBOLS, KC_BSPC)
+// Tap: left click (on every layer), hold: navigation layer.
+#define BTN_NAV LT(LAYER_NAVIGATION, MS_BTN1)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 #define UML_SCL LT(LAYER_UMLAUT, KC_SCLN)
 
@@ -67,7 +72,7 @@ static uint16_t auto_pointer_layer_timer = 0;
        KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    UML_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                      ESC_MED, SPC_NAV, TAB_FUN, ENT_SYM, BSP_NUM
+                      TAB_NUM, SPC_MED, ENT_FUN, BSP_SYM, BTN_NAV
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
@@ -108,7 +113,7 @@ static uint16_t auto_pointer_layer_timer = 0;
     XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
     KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
     XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, XXXXXXX, XXXXXXX, XXXXXXX, \
-                      _______, KC_MPLY, KC_MSTP, KC_MSTP, KC_MPLY
+                      KC_MPLY, _______, KC_MSTP, KC_MSTP, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */
 #define LAYOUT_LAYER_POINTER                                                                  \
@@ -120,7 +125,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 /**
  * \brief Navigation layer.
  *
- * Primary right-hand layer (left home thumb) is navigation and editing. Cursor
+ * Right-hand layer (outer right thumb) is navigation and editing. Cursor
  * keys are on the home position, line and page movement below, clipboard above,
  * caps lock and insert on the inner column. Thumb keys are duplicated from the
  * base layer to avoid having to layer change mid edit and to enable auto-repeat.
@@ -129,20 +134,20 @@ static uint16_t auto_pointer_layer_timer = 0;
     _______________DEAD_HALF_ROW_______________, _______________DEAD_HALF_ROW_______________, \
     ______________HOME_ROW_GACS_L______________, KC_CAPS, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
     _______________DEAD_HALF_ROW_______________,  KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END, \
-                      XXXXXXX, _______, XXXXXXX,  KC_ENT, KC_BSPC
+                       KC_TAB,  KC_SPC,  KC_ENT, KC_BSPC, _______
 
 /**
  * \brief Numeral layout.
  *
- * Primary left-hand layer (right home thumb) is numerals and symbols. Numerals
- * are in the standard numpad locations with symbols in the remaining positions.
+ * Left-hand layer (outer left thumb) is numerals and symbols. Numerals are in
+ * the standard numpad locations with symbols in the remaining positions.
  * `KC_DOT` is duplicated from the base layer.
  */
 #define LAYOUT_LAYER_NUMERAL                                                                  \
     KC_LBRC,    KC_1,    KC_2,    KC_3, KC_RBRC, _______________DEAD_HALF_ROW_______________, \
     KC_SCLN,    KC_4,    KC_5,    KC_6,  KC_EQL, ______________HOME_ROW_GACS_R______________, \
      KC_GRV,    KC_7,    KC_8,    KC_9, KC_BSLS, _______________DEAD_HALF_ROW_______________, \
-                       KC_DOT,    KC_0, KC_MINS, XXXXXXX, _______
+                      _______,    KC_0, KC_MINS,  KC_DOT, XXXXXXX
 
 /**
  * \brief Symbols layer.
@@ -239,3 +244,18 @@ const uint16_t PROGMEM rst_combo[] = {LALT_T(KC_R), LCTL_T(KC_S), LSFT_T(KC_T), 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
 };
+
+#ifdef POINTING_DEVICE_ENABLE
+/**
+ * \brief Reverse the vertical drag-scroll direction.
+ *
+ * Uses the pointing-device module's own invert setting, which it persists to
+ * EEPROM.  Runs from the main loop, i.e. after the module has loaded its
+ * config, and only writes when the setting is off (e.g. after `EE_CLR`).
+ */
+void housekeeping_task_user(void) {
+    if (!bkpd_mode_get_invert(MODE_DRAGSCROLL, 1)) {
+        bkpd_mode_set_invert(MODE_DRAGSCROLL, 1, true);
+    }
+}
+#endif // POINTING_DEVICE_ENABLE

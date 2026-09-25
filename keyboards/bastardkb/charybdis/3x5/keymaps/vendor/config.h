@@ -41,6 +41,14 @@
 #endif
 #define RGBLIGHT_LED_COUNT 36
 
+/* Tap-hold: prefer tap.  A mod-/layer-tap key only acts as hold once held
+ * longer than the tapping term, regardless of other keys pressed meanwhile. */
+#undef PERMISSIVE_HOLD
+#undef PERMISSIVE_HOLD_PER_KEY
+#undef HOLD_ON_OTHER_KEY_PRESS
+#undef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#undef CHORDAL_HOLD
+
 /* Charybdis-specific features. */
 
 #ifdef POINTING_DEVICE_ENABLE
