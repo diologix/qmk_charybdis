@@ -20,6 +20,13 @@
 #    include "bk_pointing_device.h"
 #endif // POINTING_DEVICE_ENABLE
 
+#ifdef COMMUNITY_MODULE_ARGOS_ENABLE
+#    include "argos.h"
+#    include "argos_combo.h"
+#    include "dynamic_keymap.h"
+extern argos_config_t argos_config;
+#endif // COMMUNITY_MODULE_ARGOS_ENABLE
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #    include "timer.h"
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -284,15 +291,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-#ifdef POINTING_DEVICE_ENABLE
 /**
- * \brief Set up the pointing-device modes once per boot.
+ * \brief Make the firmware authoritative over settings kept in EEPROM.
  *
- * Without Argos the pointing-device module only persists one byte of its
- * config, so the per-mode settings (DPI steps, invert) are not restored after
- * a restart.  Re-initialise them here and apply our settings on top.  Runs
- * from the main loop, i.e. after the module's own init.  DPI keys on the
- * pointer layer still work until the next restart.
+ * Argos (the pointing-device module depends on it) and VIA keep the keymap,
+ * combos and tapping term in EEPROM and only seed them from the firmware once.
+ * Re-seed them on every boot so changes to this keymap always take effect.
+ * Runs once, from the main loop, i.e. after the modules have loaded their
+ * config.  DPI keys on the pointer layer still work until the next restart.
  */
 void housekeeping_task_user(void) {
     static bool initialized = false;
@@ -300,10 +306,23 @@ void housekeeping_task_user(void) {
         return;
     }
     initialized = true;
-    bkpd_modes_init();
-    // Reverse the vertical drag-scroll direction.
-    bkpd_mode_set_invert(MODE_DRAGSCROLL, 1, true);
-    bkpd_mode_change_dpi(MODE_NORMAL, 500);
-    bkpd_mode_change_dpi(MODE_SNIPING, 200);
-}
+#ifdef COMMUNITY_MODULE_ARGOS_ENABLE
+    dynamic_keymap_reset();
+    argos_combos_copy_from_QMK();
+    argos_combos_load_from_eeprom();
+    // Argos' `get_tapping_term` returns its own value (RAM only, no write).
+    argos_config.global_tapping_term = TAPPING_TERM;
+#endif // COMMUNITY_MODULE_ARGOS_ENABLE
+#ifdef POINTING_DEVICE_ENABLE
+    // Reverse the vertical drag-scroll direction; 500 DPI, 200 when sniping.
+    if (!bkpd_mode_get_invert(MODE_DRAGSCROLL, 1)) {
+        bkpd_mode_set_invert(MODE_DRAGSCROLL, 1, true);
+    }
+    if (bkpd_mode_get_dpi(MODE_NORMAL) != 500) {
+        bkpd_mode_change_dpi(MODE_NORMAL, 500);
+    }
+    if (bkpd_mode_get_dpi(MODE_SNIPING) != 200) {
+        bkpd_mode_change_dpi(MODE_SNIPING, 200);
+    }
 #endif // POINTING_DEVICE_ENABLE
+}
