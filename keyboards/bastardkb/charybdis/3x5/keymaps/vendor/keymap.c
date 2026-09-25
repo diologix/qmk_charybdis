@@ -152,15 +152,14 @@ static uint16_t auto_pointer_layer_timer = 0;
 /**
  * \brief Symbols layer.
  *
- * Secondary left-hand layer has shifted symbols in the same locations to reduce
- * chording when using mods with shifted symbols. `KC_LPRN` is duplicated next to
- * `KC_RPRN`.
+ * Taken over from the ZMK keymap (L3_SYMBOLS), outer columns dropped.  Thumb
+ * keys are transparent.
  */
 #define LAYOUT_LAYER_SYMBOLS                                                                  \
-    KC_LCBR, KC_AMPR, KC_ASTR, KC_LPRN, KC_RCBR, _______________DEAD_HALF_ROW_______________, \
-    KC_COLN,  KC_DLR, KC_PERC, KC_CIRC, KC_PLUS, ______________HOME_ROW_GACS_R______________, \
-    KC_TILD, KC_EXLM,   KC_AT, KC_HASH, KC_PIPE, _______________DEAD_HALF_ROW_______________, \
-                      KC_LPRN, KC_RPRN, KC_UNDS, _______, XXXXXXX
+    KC_HASH, KC_EXLM, KC_DQUO, KC_QUOT, KC_MINS, XXXXXXX, XXXXXXX, XXXXXXX, KC_AMPR, KC_ASTR, \
+    KC_TILD,  KC_DLR, KC_PERC, KC_CIRC, KC_PIPE, _______________DEAD_HALF_ROW_______________, \
+      KC_AT, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC, KC_LPRN, KC_RPRN, XXXXXXX, XXXXXXX, KC_BSLS, \
+                      _______, _______, _______, _______, _______
 
 /**
  * \brief German umlaut layer (hold the top-right key).
