@@ -61,8 +61,8 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define SPC_NAV LT(LAYER_NAVIGATION, KC_SPC)
 #define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
 #define BSP_SYM LT(LAYER_SYMBOLS, KC_BSPC)
-// Tap: left click (on every layer), hold: navigation layer.
-#define BTN_NAV LT(LAYER_NAVIGATION, MS_BTN1)
+// Tap: Tab, hold: navigation layer.
+#define TAB_NAV LT(LAYER_NAVIGATION, KC_TAB)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 // Top outer keys: hold for the media layer.
 #define MED_Q LT(LAYER_MEDIA, KC_Q)
@@ -98,7 +98,7 @@ static uint16_t auto_pointer_layer_timer = 0;
       MED_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    MED_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                      BTN_NUM, SPC_NAV, ENT_FUN, BSP_SYM, BTN_NAV
+                      BTN_NUM, SPC_NAV, ENT_FUN, BSP_SYM, TAB_NAV
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
@@ -151,7 +151,7 @@ static uint16_t auto_pointer_layer_timer = 0;
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
     ______________HOME_ROW_SCGA_L______________, MS_BTN4, KC_PGDN, KC_PGUP, MS_BTN5, KC_LSFT, \
     _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
-                      MS_BTN1, BTN3_SCR, MS_BTN2, MS_BTN3, MS_BTN1
+                      MS_BTN1, BTN3_SCR, MS_BTN2, MS_BTN1, MS_BTN2
 
 /**
  * \brief Navigation layer.
@@ -269,8 +269,8 @@ const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_NAV, COMBO_END};
 // Hold Shift on the other hand for capitals.
 const uint16_t PROGMEM ae_combo[] = {LSFT_T(KC_A), SPC_NAV, COMBO_END};
 const uint16_t PROGMEM sz_combo[] = {LGUI_T(KC_S), SPC_NAV, COMBO_END};
-const uint16_t PROGMEM oe_combo[] = {LSFT_T(KC_O), BTN_NAV, COMBO_END};
-const uint16_t PROGMEM ue_combo[] = {KC_U, BTN_NAV, COMBO_END};
+const uint16_t PROGMEM oe_combo[] = {LSFT_T(KC_O), TAB_NAV, COMBO_END};
+const uint16_t PROGMEM ue_combo[] = {KC_U, TAB_NAV, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
