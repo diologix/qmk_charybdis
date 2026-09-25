@@ -59,6 +59,19 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 #define UML_SCL LT(LAYER_UMLAUT, KC_SCLN)
 
+// Workspace keys (nav layer): tap = Gui+n, hold = Gui+Shift+n.  Handled in
+// `process_record_user`; layer 0 is only used as a tap-hold carrier.
+#define WS_1 LT(0, KC_1)
+#define WS_2 LT(0, KC_2)
+#define WS_3 LT(0, KC_3)
+#define WS_4 LT(0, KC_4)
+#define WS_5 LT(0, KC_5)
+#define WS_6 LT(0, KC_6)
+#define WS_7 LT(0, KC_7)
+#define WS_8 LT(0, KC_8)
+#define WS_9 LT(0, KC_9)
+#define WS_0 LT(0, KC_0)
+
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
 #    define DPI_MOD KC_NO
@@ -76,8 +89,8 @@ static uint16_t auto_pointer_layer_timer = 0;
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-#define ______________HOME_ROW_GACS_L______________ KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, XXXXXXX
-#define ______________HOME_ROW_GACS_R______________ XXXXXXX, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI
+#define ______________HOME_ROW_SCGA_L______________ KC_LSFT, KC_LCTL, KC_LGUI, KC_LALT, XXXXXXX
+#define ______________HOME_ROW_SCGA_R______________ XXXXXXX, KC_LCTL, KC_LGUI, KC_LALT, KC_LSFT
 
 /*
  * Layers used on the Charybdis Nano.
@@ -99,7 +112,7 @@ static uint16_t auto_pointer_layer_timer = 0;
  */
 #define LAYOUT_LAYER_FUNCTION                                                                 \
     _______________DEAD_HALF_ROW_______________, KC_F10,   KC_F1,   KC_F2,   KC_F3, KC_PAUS, \
-    ______________HOME_ROW_GACS_L______________, KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL, \
+    ______________HOME_ROW_SCGA_L______________, KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL, \
     _______________DEAD_HALF_ROW_______________, KC_F12,   KC_F7,   KC_F8,   KC_F9, KC_PSCR, \
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
 
@@ -118,36 +131,34 @@ static uint16_t auto_pointer_layer_timer = 0;
 /** \brief Mouse emulation and pointer functions. */
 #define LAYOUT_LAYER_POINTER                                                                  \
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
-    ______________HOME_ROW_GACS_L______________, ______________HOME_ROW_GACS_R______________, \
+    ______________HOME_ROW_SCGA_L______________, ______________HOME_ROW_SCGA_R______________, \
     _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
                       MS_BTN2, MS_BTN1, MS_BTN3, MS_BTN3, MS_BTN1
 
 /**
  * \brief Navigation layer.
  *
- * Right-hand layer (outer right thumb) is navigation and editing. Cursor
- * keys are on the home position, line and page movement below, clipboard above,
- * caps lock and insert on the inner column. Thumb keys are duplicated from the
- * base layer to avoid having to layer change mid edit and to enable auto-repeat.
+ * Left half taken over from the ZMK keymap (L1-NAV): workspace keys (tap =
+ * Gui+n, hold = Gui+Shift+n), Gui+Alt+1/2 and Shift.  Right half has the
+ * arrows starting on the inner column as in ZMK, line and page movement below.
  */
 #define LAYOUT_LAYER_NAVIGATION                                                               \
-    _______________DEAD_HALF_ROW_______________, _______________DEAD_HALF_ROW_______________, \
-    ______________HOME_ROW_GACS_L______________, KC_CAPS, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
-    _______________DEAD_HALF_ROW_______________,  KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END, \
-                       KC_TAB,  KC_SPC,  KC_ENT, KC_BSPC, _______
+    XXXXXXX,    WS_1,    WS_2,    WS_3, LGUI(LALT(KC_1)), _______________DEAD_HALF_ROW_______________, \
+       WS_0,    WS_4,    WS_5,    WS_6, LGUI(LALT(KC_2)), KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_CAPS, \
+    KC_LSFT,    WS_7,    WS_8,    WS_9, XXXXXXX, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  KC_INS, \
+                      KC_LSFT, _______, KC_LGUI, KC_BSPC, _______
 
 /**
  * \brief Numeral layout.
  *
- * Left-hand layer (outer left thumb) is numerals and symbols. Numerals are in
- * the standard numpad locations with symbols in the remaining positions.
- * `KC_DOT` is duplicated from the base layer.
+ * Taken over from the ZMK keymap (L5_NUMBERS), outer columns dropped.  Thumb
+ * keys are transparent.
  */
 #define LAYOUT_LAYER_NUMERAL                                                                  \
-    KC_LBRC,    KC_1,    KC_2,    KC_3, KC_RBRC, _______________DEAD_HALF_ROW_______________, \
-    KC_SCLN,    KC_4,    KC_5,    KC_6,  KC_EQL, ______________HOME_ROW_GACS_R______________, \
-     KC_GRV,    KC_7,    KC_8,    KC_9, KC_BSLS, _______________DEAD_HALF_ROW_______________, \
-                      _______,    KC_0, KC_MINS,  KC_DOT, XXXXXXX
+    KC_UNDS,    KC_1,    KC_2,    KC_3, KC_PLUS,  KC_NUM, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+       KC_0,    KC_4,    KC_5,    KC_6, KC_MINS, _______________DEAD_HALF_ROW_______________, \
+     KC_DOT,    KC_7,    KC_8,    KC_9,  KC_EQL, _______________DEAD_HALF_ROW_______________, \
+                      _______, _______, _______, _______, _______
 
 /**
  * \brief Symbols layer.
@@ -178,23 +189,24 @@ static uint16_t auto_pointer_layer_timer = 0;
 /**
  * \brief Add Home Row mod to a layout.
  *
- * Expects a 10-key per row layout.  Adds support for GACS (Gui, Alt, Ctl, Shift)
- * home row.  The layout passed in parameter must contain at least 20 keycodes.
+ * Expects a 10-key per row layout.  Adds SCGA (Shift, Ctl, Gui, Alt) home-row
+ * mods, mirrored on the right, as in the ZMK keymap.  The layout passed in
+ * parameter must contain at least 20 keycodes.
  *
  * This is meant to be used with `LAYER_ALPHAS_QWERTY` defined above, eg.:
  *
- *     HOME_ROW_MOD_GACS(LAYER_ALPHAS_QWERTY)
+ *     HOME_ROW_MOD_SCGA(LAYER_ALPHAS_QWERTY)
  */
-#define _HOME_ROW_MOD_GACS(                                            \
+#define _HOME_ROW_MOD_SCGA(                                            \
     L00, L01, L02, L03, L04, R05, R06, R07, R08, R09,                  \
     L10, L11, L12, L13, L14, R15, R16, R17, R18, R19,                  \
     ...)                                                               \
              L00,         L01,         L02,         L03,         L04,  \
              R05,         R06,         R07,         R08,         R09,  \
-      LGUI_T(L10), LALT_T(L11), LCTL_T(L12), LSFT_T(L13),        L14,  \
-             R15,  RSFT_T(R16), RCTL_T(R17), LALT_T(R18), RGUI_T(R19), \
+      LSFT_T(L10), LCTL_T(L11), LGUI_T(L12), LALT_T(L13),        L14,  \
+             R15,  LCTL_T(R16), LGUI_T(R17), LALT_T(R18), LSFT_T(R19), \
       __VA_ARGS__
-#define HOME_ROW_MOD_GACS(...) _HOME_ROW_MOD_GACS(__VA_ARGS__)
+#define HOME_ROW_MOD_SCGA(...) _HOME_ROW_MOD_SCGA(__VA_ARGS__)
 
 /**
  * \brief Add pointer layer keys to a layout.
@@ -224,7 +236,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_BASE] = LAYOUT_wrapper(
-    POINTER_MOD(HOME_ROW_MOD_GACS(LAYOUT_LAYER_BASE))
+    POINTER_MOD(HOME_ROW_MOD_SCGA(LAYOUT_LAYER_BASE))
   ),
   [LAYER_FUNCTION] = LAYOUT_wrapper(LAYOUT_LAYER_FUNCTION),
   [LAYER_NAVIGATION] = LAYOUT_wrapper(LAYOUT_LAYER_NAVIGATION),
@@ -238,11 +250,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // clang-format on
 
 /** \brief Combos. R, S and T are home-row mod-taps, so match those keycodes. */
-const uint16_t PROGMEM rst_combo[] = {LALT_T(KC_R), LCTL_T(KC_S), LSFT_T(KC_T), COMBO_END};
+const uint16_t PROGMEM rst_combo[] = {LCTL_T(KC_R), LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
 };
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case WS_1 ... WS_0:
+            if (record->event.pressed) {
+                uint16_t kc = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+                tap_code16(record->tap.count ? LGUI(kc) : LGUI(LSFT(kc)));
+            }
+            return false;
+    }
+    return true;
+}
 
 #ifdef POINTING_DEVICE_ENABLE
 /**
