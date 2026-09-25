@@ -291,13 +291,17 @@ void housekeeping_task_user(void) {
     if (!bkpd_mode_get_invert(MODE_DRAGSCROLL, 1)) {
         bkpd_mode_set_invert(MODE_DRAGSCROLL, 1, true);
     }
-    // Start with 500 DPI in normal mode.  Only once per boot, so the DPI key
-    // on the pointer layer still works until the next restart.
+    // Start with 500 DPI in normal mode and 200 DPI when sniping.  Only once
+    // per boot, so the DPI keys on the pointer layer still work until the
+    // next restart.
     static bool dpi_initialized = false;
     if (!dpi_initialized) {
         dpi_initialized = true;
         if (bkpd_mode_get_dpi(MODE_NORMAL) != 500) {
             bkpd_mode_change_dpi(MODE_NORMAL, 500);
+        }
+        if (bkpd_mode_get_dpi(MODE_SNIPING) != 200) {
+            bkpd_mode_change_dpi(MODE_SNIPING, 200);
         }
     }
 #endif // POINTING_DEVICE_ENABLE
