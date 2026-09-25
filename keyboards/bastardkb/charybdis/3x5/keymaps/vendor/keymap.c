@@ -256,9 +256,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /** \brief Combos. R, S and T are home-row mod-taps, so match those keycodes. */
 const uint16_t PROGMEM rst_combo[] = {LCTL_T(KC_R), LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
+const uint16_t PROGMEM st_combo[]  = {LGUI_T(KC_S), LALT_T(KC_T), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
+    // Sticky Gui for the next key, as ZMK's `&sk LEFT_WIN`.
+    COMBO(st_combo, OSM(MOD_LGUI)),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
