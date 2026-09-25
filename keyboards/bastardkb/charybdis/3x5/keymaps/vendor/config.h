@@ -49,8 +49,7 @@
 #undef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 #undef CHORDAL_HOLD
 
-/* Tapping term as for the ZMK home-row mods.  Argos overrides it with its own
- * value, which keymap.c keeps in sync with this one. */
+/* Tapping term as for the ZMK home-row mods. */
 #undef TAPPING_TERM
 #define TAPPING_TERM 250
 
