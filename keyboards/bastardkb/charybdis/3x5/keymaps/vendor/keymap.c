@@ -103,7 +103,6 @@ static uint16_t auto_pointer_layer_timer = 0;
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
 #define ______________HOME_ROW_SCGA_L______________ KC_LSFT, KC_LCTL, KC_LGUI, KC_LALT, XXXXXXX
-#define ______________HOME_ROW_SCGA_R______________ XXXXXXX, KC_LCTL, KC_LGUI, KC_LALT, KC_LSFT
 
 /*
  * Layers used on the Charybdis Nano.
@@ -142,10 +141,15 @@ static uint16_t auto_pointer_layer_timer = 0;
     XXXXXXX, KC_MUTE, KC_MPLY,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, XXXXXXX, XXXXXXX, XXXXXXX, \
                       KC_MPLY, _______, KC_MSTP, KC_MSTP, KC_MPLY
 
-/** \brief Mouse emulation and pointer functions. */
+/**
+ * \brief Mouse emulation and pointer functions.
+ *
+ * Right home row: browser back/forward (mouse buttons 4/5) on M/I, page
+ * down/up on N/E, Shift on O.
+ */
 #define LAYOUT_LAYER_POINTER                                                                  \
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
-    ______________HOME_ROW_SCGA_L______________, ______________HOME_ROW_SCGA_R______________, \
+    ______________HOME_ROW_SCGA_L______________, MS_BTN4, KC_PGDN, KC_PGUP, MS_BTN5, KC_LSFT, \
     _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
                       MS_BTN1, BTN3_SCR, MS_BTN2, MS_BTN3, MS_BTN1
 
