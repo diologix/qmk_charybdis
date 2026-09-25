@@ -49,6 +49,15 @@
 #undef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 #undef CHORDAL_HOLD
 
+/* Tapping term as for the ZMK home-row mods.  Argos overrides it with its own
+ * value, which keymap.c keeps in sync with this one. */
+#undef TAPPING_TERM
+#define TAPPING_TERM 250
+
+/* Flow Tap (like ZMK's `require-prior-idle-ms`): a tap-hold key pressed within
+ * 100 ms of the previous key is always a tap. */
+#define FLOW_TAP_TERM 100
+
 /* Charybdis-specific features. */
 
 #ifdef POINTING_DEVICE_ENABLE

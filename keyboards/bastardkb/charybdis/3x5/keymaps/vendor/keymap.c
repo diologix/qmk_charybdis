@@ -20,6 +20,11 @@
 #    include "bk_pointing_device.h"
 #endif // POINTING_DEVICE_ENABLE
 
+#ifdef COMMUNITY_MODULE_ARGOS_ENABLE
+#    include "argos.h"
+extern argos_config_t argos_config;
+#endif // COMMUNITY_MODULE_ARGOS_ENABLE
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #    include "timer.h"
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -268,17 +273,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-#ifdef POINTING_DEVICE_ENABLE
 /**
- * \brief Reverse the vertical drag-scroll direction.
+ * \brief Enforce settings that modules otherwise read from EEPROM.
  *
- * Uses the pointing-device module's own invert setting, which it persists to
- * EEPROM.  Runs from the main loop, i.e. after the module has loaded its
- * config, and only writes when the setting is off (e.g. after `EE_CLR`).
+ * Runs from the main loop, i.e. after the modules have loaded their config.
  */
 void housekeeping_task_user(void) {
+#ifdef COMMUNITY_MODULE_ARGOS_ENABLE
+    // Argos' `get_tapping_term` returns its own value; keep it at TAPPING_TERM
+    // (RAM only, no EEPROM write).
+    argos_config.global_tapping_term = TAPPING_TERM;
+#endif // COMMUNITY_MODULE_ARGOS_ENABLE
+#ifdef POINTING_DEVICE_ENABLE
+    // Reverse the vertical drag-scroll direction.  Uses the pointing-device
+    // module's own invert setting, persisted to EEPROM; only writes when the
+    // setting is off (e.g. after `EE_CLR`).
     if (!bkpd_mode_get_invert(MODE_DRAGSCROLL, 1)) {
         bkpd_mode_set_invert(MODE_DRAGSCROLL, 1, true);
     }
-}
+    // Start with 500 DPI in normal mode.  Only once per boot, so the DPI key
+    // on the pointer layer still works until the next restart.
+    static bool dpi_initialized = false;
+    if (!dpi_initialized) {
+        dpi_initialized = true;
+        if (bkpd_mode_get_dpi(MODE_NORMAL) != 500) {
+            bkpd_mode_change_dpi(MODE_NORMAL, 500);
+        }
+    }
 #endif // POINTING_DEVICE_ENABLE
+}
