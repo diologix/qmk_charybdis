@@ -61,8 +61,8 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define SPC_NUM LT(LAYER_NUMERAL, KC_SPC)
 #define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
 #define TAB_SYM LT(LAYER_SYMBOLS, KC_TAB)
-// Tap: Backspace, hold: navigation layer.
-#define BSP_NAV LT(LAYER_NAVIGATION, KC_BSPC)
+// Tap: Backspace, hold: Shift.
+#define BSP_SFT LSFT_T(KC_BSPC)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 // Top outer keys: hold for the media layer.
 #define MED_Q LT(LAYER_MEDIA, KC_Q)
@@ -98,7 +98,7 @@ static uint16_t auto_pointer_layer_timer = 0;
       MED_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    MED_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                    BTN_NAV_L, SPC_NUM, ENT_FUN, TAB_SYM, BSP_NAV
+                    BTN_NAV_L, SPC_NUM, ENT_FUN, TAB_SYM, BSP_SFT
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
@@ -159,7 +159,7 @@ static uint16_t auto_pointer_layer_timer = 0;
  * Left half taken over from the ZMK keymap (L1-NAV): workspace keys (tap =
  * Gui+n, hold = Gui+Shift+n), Gui+Alt+1/2 and Shift.  Right half has the
  * arrows starting on the inner column as in ZMK, line and page movement below,
- * caps lock above.  Held from the outer left or the outer right thumb.
+ * caps lock above.  Held from the outer left thumb.
  */
 #define LAYOUT_LAYER_NAVIGATION                                                               \
     XXXXXXX,    WS_1,    WS_2,    WS_3, LGUI(LALT(KC_1)), KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
@@ -269,8 +269,8 @@ const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_NUM, COMBO_END};
 // Hold Shift on the other hand for capitals.
 const uint16_t PROGMEM ae_combo[] = {LSFT_T(KC_A), SPC_NUM, COMBO_END};
 const uint16_t PROGMEM sz_combo[] = {LGUI_T(KC_S), SPC_NUM, COMBO_END};
-const uint16_t PROGMEM oe_combo[] = {LSFT_T(KC_O), BSP_NAV, COMBO_END};
-const uint16_t PROGMEM ue_combo[] = {KC_U, BSP_NAV, COMBO_END};
+const uint16_t PROGMEM oe_combo[] = {LSFT_T(KC_O), BSP_SFT, COMBO_END};
+const uint16_t PROGMEM ue_combo[] = {KC_U, BSP_SFT, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(rst_combo, KC_ESC),
