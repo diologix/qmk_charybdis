@@ -56,9 +56,9 @@ static uint16_t auto_pointer_layer_timer = 0;
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
 #endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
-// Tap: left click (on every layer), hold: numeral layer.
-#define BTN_NUM LT(LAYER_NUMERAL, MS_BTN1)
-#define SPC_NAV LT(LAYER_NAVIGATION, KC_SPC)
+// Tap: left click (on every layer), hold: navigation layer.
+#define BTN_NAV_L LT(LAYER_NAVIGATION, MS_BTN1)
+#define SPC_NUM LT(LAYER_NUMERAL, KC_SPC)
 #define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
 #define TAB_SYM LT(LAYER_SYMBOLS, KC_TAB)
 // Tap: Backspace, hold: navigation layer.
@@ -98,7 +98,7 @@ static uint16_t auto_pointer_layer_timer = 0;
       MED_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    MED_SCL, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I, KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                      BTN_NUM, SPC_NAV, ENT_FUN, TAB_SYM, BSP_NAV
+                    BTN_NAV_L, SPC_NUM, ENT_FUN, TAB_SYM, BSP_NAV
 
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
@@ -159,13 +159,13 @@ static uint16_t auto_pointer_layer_timer = 0;
  * Left half taken over from the ZMK keymap (L1-NAV): workspace keys (tap =
  * Gui+n, hold = Gui+Shift+n), Gui+Alt+1/2 and Shift.  Right half has the
  * arrows starting on the inner column as in ZMK, line and page movement below,
- * caps lock above.  Held from the middle left or the outer right thumb.
+ * caps lock above.  Held from the outer left or the outer right thumb.
  */
 #define LAYOUT_LAYER_NAVIGATION                                                               \
     XXXXXXX,    WS_1,    WS_2,    WS_3, LGUI(LALT(KC_1)), KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
        WS_0,    WS_4,    WS_5,    WS_6, LGUI(LALT(KC_2)), KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, XXXXXXX, \
     KC_LSFT,    WS_7,    WS_8,    WS_9, XXXXXXX, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  KC_INS, \
-                      KC_LSFT, _______, KC_LGUI, KC_BSPC, _______
+                      _______, KC_LSFT, KC_LGUI, KC_BSPC, _______
 
 /**
  * \brief Numeral layout.
@@ -260,15 +260,15 @@ const uint16_t PROGMEM tab_combo[]       = {LSFT_T(KC_A), LCTL_T(KC_R), COMBO_EN
 const uint16_t PROGMEM shift_tab_combo[] = {MED_Q, KC_W, COMBO_END};
 // Clipboard combos from the ZMK keymap: letter + Space thumb = Ctrl+letter,
 // letter + outer left thumb = Ctrl+Shift+letter.
-const uint16_t PROGMEM copy_combo[]        = {KC_C, SPC_NAV, COMBO_END};
-const uint16_t PROGMEM paste_combo[]       = {KC_V, SPC_NAV, COMBO_END};
-const uint16_t PROGMEM shift_copy_combo[]  = {KC_C, BTN_NUM, COMBO_END};
-const uint16_t PROGMEM shift_paste_combo[] = {KC_V, BTN_NUM, COMBO_END};
-const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_NAV, COMBO_END};
+const uint16_t PROGMEM copy_combo[]        = {KC_C, SPC_NUM, COMBO_END};
+const uint16_t PROGMEM paste_combo[]       = {KC_V, SPC_NUM, COMBO_END};
+const uint16_t PROGMEM shift_copy_combo[]  = {KC_C, BTN_NAV_L, COMBO_END};
+const uint16_t PROGMEM shift_paste_combo[] = {KC_V, BTN_NAV_L, COMBO_END};
+const uint16_t PROGMEM username_combo[]    = {KC_B, SPC_NUM, COMBO_END};
 // Umlauts from the ZMK keymap, sent as AltGr combos for US International.
 // Hold Shift on the other hand for capitals.
-const uint16_t PROGMEM ae_combo[] = {LSFT_T(KC_A), SPC_NAV, COMBO_END};
-const uint16_t PROGMEM sz_combo[] = {LGUI_T(KC_S), SPC_NAV, COMBO_END};
+const uint16_t PROGMEM ae_combo[] = {LSFT_T(KC_A), SPC_NUM, COMBO_END};
+const uint16_t PROGMEM sz_combo[] = {LGUI_T(KC_S), SPC_NUM, COMBO_END};
 const uint16_t PROGMEM oe_combo[] = {LSFT_T(KC_O), BSP_NAV, COMBO_END};
 const uint16_t PROGMEM ue_combo[] = {KC_U, BSP_NAV, COMBO_END};
 
